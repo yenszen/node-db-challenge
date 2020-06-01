@@ -3,6 +3,7 @@ const db = require("./project-model");
 
 const router = express.Router();
 
+// GET requests
 router.get("/", (req, res) => {
   db.getProjects()
     .then(projects => {
@@ -42,6 +43,7 @@ router.get("/all/tasks", (req, res) => {
     });
 });
 
+// POST requests
 router.post("/", (req, res) => {
   const postData = req.body;
 
@@ -78,12 +80,90 @@ router.post("/:id/tasks", (req, res) => {
     })
     .catch(err => {
       console.log(err);
-      res
-        .status(500)
-        .json({
-          message:
-            "Please include task description and ensure project ID is valid"
-        });
+      res.status(500).json({
+        message:
+          "Please include task description and ensure project ID is valid"
+      });
+    });
+});
+
+// PUT requests - STRETCH
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+
+  db.updateProject(id, changes)
+    .then(count => {
+      if (count) {
+        res.status(200).json({ updated: count });
+      } else {
+        res
+          .status(404)
+          .json({ message: "Project with specified ID does not exist" });
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ message: "Could not update database" });
+    });
+});
+
+router.put("/all/tasks/:id", (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+
+  db.updateTask(id, changes)
+    .then(count => {
+      if (count) {
+        res.status(200).json({ updated: count });
+      } else {
+        res
+          .status(404)
+          .json({ message: "Task with specified ID does not exist" });
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ message: "Could not update database" });
+    });
+});
+
+// DELETE requests - STRETCH
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+
+  db.removeProject(id)
+    .then(count => {
+      if (count) {
+        res.status(200).json({ removed: count });
+      } else {
+        res
+          .status(404)
+          .json({ message: "Project with specified ID does not exist" });
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ message: "Could not remove from database" });
+    });
+});
+
+router.delete("/all/tasks/:id", (req, res) => {
+  const { id } = req.params;
+
+  db.removeTask(id)
+    .then(count => {
+      if (count) {
+        res.status(200).json({ removed: count });
+      } else {
+        res
+          .status(404)
+          .json({ message: "Task with specified ID does not exist" });
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ message: "Could not remove from database" });
     });
 });
 

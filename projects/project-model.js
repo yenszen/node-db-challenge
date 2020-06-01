@@ -1,5 +1,6 @@
 const db = require("../data/db-config");
 
+// GET functions
 function getProjects() {
   return db("projects");
 }
@@ -18,6 +19,7 @@ function getTasks() {
     );
 }
 
+// POST functions
 function addProject(project) {
   return db("projects").insert(project);
 }
@@ -30,11 +32,41 @@ function addTask(id, task) {
   return db("tasks").insert({ project_id: id, ...task });
 }
 
+// PUT functions
+function updateProject(id, changes) {
+  return db("projects")
+    .where({ id })
+    .update(changes);
+}
+
+function updateTask(id, changes) {
+  return db("tasks")
+    .where({ id })
+    .update(changes);
+}
+
+// DELETE functions
+function removeProject(id) {
+  return db("projects")
+    .where({ id })
+    .del();
+}
+
+function removeTask(id) {
+  return db("tasks")
+    .where({ id })
+    .del();
+}
+
 module.exports = {
   getProjects,
   getResources,
   getTasks,
   addProject,
   addResource,
-  addTask
+  addTask,
+  updateProject,
+  updateTask,
+  removeProject,
+  removeTask
 };
